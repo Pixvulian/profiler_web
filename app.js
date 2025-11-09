@@ -1,5 +1,5 @@
 // ===== P∆ (Profiler Web) =====
-const VK_TOKEN = "vk1.a.3OzKnoEWbuP-K_w35uFUthvwMqu6t69jzLT-gvIncMi1iqQxaqRtNKhspzQfFnF06u5hauSSur-dHGRPOsz0bvV2sD0NAkHT_g7WSDrSPimlKnOpDE_vSMGPKCO42YMttw0foc2UbIz-rJq8JQHMiGwKxiYHEJLzi5e31JsRBr13_xcymjJFsa99hPB4dbyIJepi0qu-Qf1Hh5eKtsXc-w";
+const VK_TOKEN = "vk1.a.3OzKnoEWbuP-K_w35uFUthvwMqu6t69jzLT-gvIncMi1iqQxaqRtNKhspzQfFnF06u5hauSSur-dHGRPOsz0bvV2sD0NAkHT_g7WSDrSPimlKnOpDE_vSMGPKCO42YMttw0foc2UbIz-rJq8JQHMiGwKxiYHEJLzi5e31JsRBr13_xcymjJFsa99hPB4dbyIJepi0qu-Qf1Hh5eKtsXc-w&";
 const HF_TOKEN = "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";
 const VK_VERSION = "5.131";
 const HF_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B";
@@ -289,4 +289,9 @@ function list(pairs){ return pairs.map(([k,v])=> `<div class="meta"><span style=
 function extractTopics(text){ const words=norm(text).split(/\W+/).filter(w=>w&&w.length>3); const f={}; words.forEach(w=> f[w]=(f[w]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,8).map(x=>x[0]); }
 function randomNoise(n){ const chars='01ABCDEFGHIJKLMNOPQRSTUVWXYZ'; let s=''; for(let i=0;i<n;i++){ s+=chars[Math.floor(Math.random()*chars.length)]; } return s; }
 
-(function init(){ renderHistory(); renderSaved(); })();
+// init
+(function init(){
+  renderHistory();
+  renderSaved();
+  showAnalyze(false); // <-- добавь эту строку
+})();
