@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROFILER</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Inter', system-ui, monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      padding: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .search-container {
+      display: flex;
+      gap: 10px;
+      width: 90%;
+      max-width: 600px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+    button {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+    .results {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card img {
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <header>P∆ PROFILER</header>
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Введите имя, ник или email">
+    <button onclick="searchVK()">Поиск</button>
+  </div>
+  <div id="status"></div>
+  <div class="results" id="results"></div>
+
+  <div class="footer">
+    <span>🏠 Главная</span>
+    <span>⭐ Сохранено</span>
+    <span>🕓 История</span>
+  </div>
+
+  <script>
+    const VK_TOKEN = '<<<ВСТАВЬ_СВОЙ_ТОКЕН_СЮДА>>>';
+    const API_VERSION = '5.199';
+
+    async function searchVK() {
+      const query = document.getElementById('search').value.trim();
+      if (!query) return;
+      document.getElementById('status').innerText = 'SCANNING TARGET...';
+      const url = `https://api.vk.com/method/users.search?q=${encodeURIComponent(query)}&fields=photo_200,city,domain,bdate,sex,status,occupation,education,site,about&access_token=${VK_TOKEN}&v=${API_VERSION}&count=10`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.error) {
+          document.getElementById('status').innerText = 'VK: ошибка запроса';
+          return;
+        }
+        renderResults(data.response.items);
+      } catch (err) {
+        document.getElementById('status').innerText = 'Ошибка подключения';
+      }
+    }
+
+    function renderResults(users) {
+      const container = document.getElementById('results');
+      container.innerHTML = '';
+      if (!users || users.length === 0) {
+        document.getElementById('status').innerText = 'Совпадений нет.';
+        return;
+      }
+      document.getElementById('status').innerText = `Найдено: ${users.length}`;
+
+      users.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <img src="${u.photo_200}" alt="${u.first_name}">
+          <div style="flex:1;">
+            <div><b>${u.first_name} ${u.last_name}</b></div>
+            <div style="font-size:0.9em;color:#ccc;">${u.city ? u.city.title : ''}</div>
+          </div>
+          <a href="https://vk.com/${u.domain}" target="_blank" style="color:#0af;">VK</a>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
